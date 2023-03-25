@@ -1,7 +1,8 @@
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Controller {
-    public static void run(){
+    public static void run() throws IOException {
         Contact c1 = new Contact("Иванов", "Игорь","79111234567", 2,"Сантехник");
         Contact c2 = new Contact("Петров", "Сергей","79311234567", 1,"Адвокат");
         Contact c3 = new Contact("Павлова", "Ольга","79211234567", 2,"Менеджер ВТБ ипотека");
@@ -17,7 +18,8 @@ public class Controller {
         Menu menu = new Menu(scanner);
         Add add = new Add(scanner);
         FileReader fileReader = new FileReader(scanner);
-        UserInterface userInterface = new UserInterface(scanner, menu, myBook, add, fileReader);
+        DelContact delContact = new DelContact(scanner);
+        UserInterface userInterface = new UserInterface(scanner, menu, myBook, add, fileReader, delContact);
         userInterface.start();
     }
 }

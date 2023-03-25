@@ -1,6 +1,6 @@
 public class JsonWriter implements Format {
     @Override
-    public <T extends Contact> String createString(T task) {
+    public <T extends Contact> String createString(T contact) {
         return String.format("""
                 {
                 "id" : %d, {
@@ -11,7 +11,7 @@ public class JsonWriter implements Format {
                 "Комментарий":"%s".
                 }
                 }
-                """, task.getId(), task.getPersonLastName(), task.getPersonFirstName(), task.getNumber(),
-                task.getPriority(), task.getComment());
+                """, contact.getId(), contact.getPersonLastName(), contact.getPersonFirstName(), contact.getNumber(),
+                contact.getPriority(), contact.getComment());
     }
 }

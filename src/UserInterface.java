@@ -1,25 +1,28 @@
+import java.io.IOException;
 import java.util.Scanner;
 public class UserInterface {
-
     private final Scanner scanner;
     private final Menu menu;
     private final Book book;
     private final Add add;
     private final FileReader fileReader;
+    private final DelContact delContact;
     protected static String csvPath = "/Users/logeyko/IdeaProjects/Practice_6_OOP/src/Book.csv";
     protected static String jsonPath = "/Users/logeyko/IdeaProjects/Practice_6_OOP/src/Book.json";
+    protected static String xmlPath = "/Users/logeyko/IdeaProjects/Practice_6_OOP/src/Book.xml";
 
 // путь где расположены файлы, в которые выполняется запись /Users/logeyko/IdeaProjects/Practice_6_OOP/src
 
-    public UserInterface(Scanner scanner, Menu menu, Book book, Add add, FileReader fileReader) {
+    public UserInterface(Scanner scanner, Menu menu, Book book, Add add, FileReader fileReader, DelContact delContact) {
         this.scanner = scanner;
         this.menu = menu;
         this.book = book;
         this.add = add;
         this.fileReader = fileReader;
+        this.delContact = delContact;
     }
 
-    public void start() {
+    public void start() throws IOException {
 
         while (true) {
             switch (menu.selectFunction()) {
@@ -59,7 +62,11 @@ public class UserInterface {
                 case "8": // добавить новый контакт в справочник
                     book.add(add.makeNewContact());
                     break;
-                case "9": // изменить существующий контакт
+                case "9": // удалить контакт из справочника
+                    System.out.println("Введите Фамилию контакта из справочника, которого необходимо удалить: ");
+                    delContact.delContact(book.getByLastName((scanner.nextLine())));
+                    break;
+                case "10": // изменить существующий контакт
                     System.out.println("Введите номер (ID) записи в справочнике, которую необходимо изменить: ");
                     changeContact(book.getById((scanner.nextInt())));
                 case "0": // выход
@@ -71,7 +78,11 @@ public class UserInterface {
         }
     }
 
-    public void saveFile() {
+    private String lastNameDelContact(String nextLine) {
+        return lastNameDelContact(nextLine);
+    }
+
+    public void saveFile() throws IOException {
         BookIterator bookIterator = new BookIterator(book);
         while (true) {
             switch (menu.selectSaveType()) {
@@ -85,7 +96,7 @@ public class UserInterface {
                     }
                     System.out.println("\nКонтакты справочника сохранены в файл формата <CSV>.\n");
                 }
-                case "2" -> // JSOM
+                case "2" -> // JSON
                 {
                     while (bookIterator.hasNext()) {
                         SaveModel<Contact> saved = new SaveModel<>(bookIterator.next());
@@ -95,8 +106,17 @@ public class UserInterface {
                     }
                     System.out.print("\nКонтакты справочника сохранены в файл формата <JSON>.\n");
                 }
-
-                case "3" -> //меню
+                case "3" -> // XML
+                {
+                    while (bookIterator.hasNext()) {
+                        SaveModel<Contact> saved = new SaveModel<>(bookIterator.next());
+                        saved.setFormat(new XmlWriter());
+                        saved.setPath(xmlPath);
+                        saved.save();
+                    }
+                    System.out.print("\nКонтакты справочника сохранены в файл формата <XML>.\n");
+                }
+                case "4" -> //меню
                         start();
                 case "0" -> // выход
                         System.exit(0);
@@ -107,7 +127,7 @@ public class UserInterface {
         }
     }
 
-    public void changeContact(Contact changing) {
+    public void changeContact(Contact changing) throws IOException {
         while (true) {
             switch (menu.selectContactChange()) {
                 case "1" -> { // изменяем Фамилию или наименование Организации контакта
@@ -140,34 +160,4 @@ public class UserInterface {
             }
         }
     }
-//    public void fileReader (){
-//        List<List<String>> records = new ArrayList<>();
-//        try (Scanner scanner = new Scanner(new File("/Users/logeyko/IdeaProjects/Practice_6_OOP/src/Book.csv"));) {
-//            while (scanner.hasNextLine()) {
-//                records.add(getRecord(scanner.nextLine()));
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        System.out.println("Список контактов из файла Book.csv:\n");
-//        for (List<String>  list: records){
-//            System.out.print(String.format("№(ID): %s Фамилия / Наименование: %s Имя: %s Телефон: %s Приоритет: %s Комментарий: %s\n",
-//                    list.get(0),
-//                    list.get(1),
-//                    list.get(2),
-//                    list.get(3),
-//                    list.get(4),
-//                    list.get(5)));
-//        }
-//    }
-//    private List<String> getRecord(String line) {
-//        List<String> values = new ArrayList<String>();
-//        try (Scanner rowScanner = new Scanner(line)) {
-//            rowScanner.useDelimiter(",");
-//            while (rowScanner.hasNext()) {
-//                values.add(rowScanner.next());
-//            }
-//        }
-//        return values;
-//    }
 }
